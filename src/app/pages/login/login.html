@@ -1,0 +1,7 @@
+<form nz-form (ngSubmit)="submit()">
+  <label>Tài khoản</label>
+  <input nz-input [(ngModel)]="username" name="u">
+  <label>Mật khẩu</label>
+  <input nz-input [(ngModel)]="password" name="p" type="password">
+  <button nz-button nzType="primary">Đăng nhập</button>
+</form>

@@ -1,0 +1,8 @@
+.icon-action {
+    margin: 0 14px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon-action:hover{
+    transform: scale(1.5);
+}

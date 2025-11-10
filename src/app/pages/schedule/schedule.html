@@ -1,0 +1,31 @@
+<form nz-form class="filter">
+  <div nz-row [nzGutter]="12">
+    <div nz-col nzSpan="8">
+      <input nz-input placeholder="Tìm mã HP, tên HP, phòng..." [(ngModel)]="keyword" name="kw">
+    </div>
+    <div nz-col nzSpan="4">
+      <button nz-button nzType="primary" (click)="addQuick()" type="button">Tìm kiếm</button>
+    </div>
+  </div>
+</form>
+
+<nz-table [nzData]="filtered()" nzBordered>
+  <thead>
+    <tr>
+      <th>Mã HP</th><th>Tên HP</th><th>Ngày</th><th>Giờ</th><th>Phút</th><th>Phòng</th><th>Số CB</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (s of filtered(); track s) {
+      <tr>
+        <td>{{ s.courseCode }}</td>
+        <td>{{ s.courseName }}</td>
+        <td>{{ s.date }}</td>
+        <td>{{ s.startTime }}</td>
+        <td>{{ s.durationMin }}</td>
+        <td>{{ s.roomName }}</td>
+        <td>{{ s.proctorsNeeded }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

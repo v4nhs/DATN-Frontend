@@ -1,0 +1,4 @@
+<nz-table [nzData]="data" nzBordered>
+  <thead><tr><th>Tên đợt</th><th>Bắt đầu</th><th>Kết thúc</th></tr></thead>
+  <tbody>@for (e of data; track e) { <tr><td>{{e.name}}</td><td>{{e.startDate}}</td><td>{{e.endDate}}</td></tr> }</tbody>
+</nz-table>

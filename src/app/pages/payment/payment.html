@@ -1,0 +1,35 @@
+<div class="rules">
+  <h3>Quy tắc tính tiền (demo)</h3>
+
+  <div>Đơn giá (VNĐ/ca):
+    <nz-input-number
+      [ngModel]="baseRate()"
+      (ngModelChange)="baseRate.set($event)"
+      [nzStep]="5000">
+    </nz-input-number>
+  </div>
+
+  <div>Hệ số GS:
+    <nz-input-number
+      [ngModel]="supervisorMultiplier()"
+      (ngModelChange)="supervisorMultiplier.set($event)"
+      [nzStep]="0.1">
+    </nz-input-number>
+  </div>
+
+  <div>Cuối tuần (+VNĐ):
+    <nz-input-number
+      [ngModel]="weekendBonus()"
+      (ngModelChange)="weekendBonus.set($event)"
+      [nzStep]="5000">
+    </nz-input-number>
+  </div>
+
+  <div>Vượt 90' (+VNĐ/30'):
+    <nz-input-number
+      [ngModel]="overtimePer30Min()"
+      (ngModelChange)="overtimePer30Min.set($event)"
+      [nzStep]="5000">
+    </nz-input-number>
+  </div>
+</div>

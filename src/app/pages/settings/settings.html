@@ -1,0 +1,6 @@
+<h3>Thiết lập tính tiền</h3>
+<div>Đơn giá (VNĐ/ca): <nz-input-number [(ngModel)]="baseRate" [nzStep]="5000"></nz-input-number></div>
+<div>Hệ số giám sát: <nz-input-number [(ngModel)]="supervisorMultiplier" [nzStep]="0.1"></nz-input-number></div>
+<div>Cuối tuần (+VNĐ): <nz-input-number [(ngModel)]="weekendBonus" [nzStep]="5000"></nz-input-number></div>
+<div>Vượt 90' (+VNĐ/30'): <nz-input-number [(ngModel)]="overtimePer30Min" [nzStep]="5000"></nz-input-number></div>
+<button nz-button nzType="primary" (click)="save()" style="margin-top:8px">Lưu</button>

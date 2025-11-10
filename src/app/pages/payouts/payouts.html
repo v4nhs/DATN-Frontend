@@ -1,0 +1,4 @@
+<nz-table [nzData]="data" nzBordered>
+  <thead><tr><th>Giảng viên</th><th>Kỳ</th><th>Số tiền</th><th>Trạng thái</th></tr></thead>
+  <tbody>@for (p of data; track p) { <tr><td>{{p.lecturer}}</td><td>{{p.period}}</td><td>{{p.amount|number}}</td><td>{{p.status}}</td></tr> }</tbody>
+</nz-table>

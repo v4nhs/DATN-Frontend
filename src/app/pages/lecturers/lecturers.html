@@ -1,0 +1,4 @@
+<nz-table [nzData]="data" nzBordered>
+  <thead><tr><th>Mã</th><th>Họ tên</th><th>Khoa</th></tr></thead>
+  <tbody>@for (t of data; track t) { <tr><td>{{t.code}}</td><td>{{t.fullName}}</td><td>{{t.dept}}</td></tr> }</tbody>
+</nz-table>

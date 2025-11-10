@@ -1,0 +1,4 @@
+<nz-table [nzData]="data" nzBordered>
+  <thead><tr><th>Phòng</th><th>Sức chứa</th></tr></thead>
+  <tbody>@for (r of data; track r) { <tr><td>{{r.name}}</td><td>{{r.capacity}}</td></tr> }</tbody>
+</nz-table>

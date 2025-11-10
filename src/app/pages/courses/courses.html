@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="./courses.css">
+<input nz-input placeholder="Tìm..." [(ngModel)]="kw" style="max-width:240px;margin-bottom:8px">
+<div nz-col nzSpan="4">
+      <button nz-button nzType="primary" type="button">Thêm mới</button>
+    </div>
+<nz-table [nzData]="filtered" nzBordered>
+  <thead>
+    <tr>
+      <th>Mã</th>
+      <th>Tên</th>
+      <th>Tín chỉ</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (c of filtered; track c) {
+    <tr>
+      <td>{{c.code}}</td>
+      <td>{{c.name}}</td>
+      <td>{{c.credits}}</td>
+      <td>
+        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" />
+        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" />
+        <!-- {{c.action}} -->
+      </td>
+    </tr>
+    }
+  </tbody>
+</nz-table>

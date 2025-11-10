@@ -1,0 +1,18 @@
+<nz-table [nzData]="data" nzBordered>
+  <thead>
+    <tr>
+      <th>Ca thi</th>
+      <th>Cán bộ</th>
+      <th>Giám sát</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (r of data; track r) {
+    <tr>
+      <td>{{r.slot}}</td>
+      <td>{{r.proctors.join(', ')}}</td>
+      <td>{{r.supervisor}}</td>
+    </tr>
+    }
+  </tbody>
+</nz-table>
