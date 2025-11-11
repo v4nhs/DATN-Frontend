@@ -1,4 +1,3 @@
-/*
 :host {
   display: flex;
   text-rendering: optimizeLegibility;
@@ -94,6 +93,7 @@ nz-header {
   top: 0;
   z-index: 100;
 
+/* Chỉ align + spacing, KHÔNG dùng space-between để tránh đẩy nút */
 .app-header {
   height: 64px;
   display: flex;
@@ -103,6 +103,7 @@ nz-header {
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 }
 
+/* Căn dropdown sang phải */
 .user-dropdown {
   margin-left: auto;
   display: flex;
@@ -110,6 +111,7 @@ nz-header {
   padding-right: 1rem;
 }
 
+/* Nút Tài khoản: trong suốt, hover không đẩy layout */
 .user-dropdown :where(.ant-btn) {
   display: inline-flex;
   align-items: center;
@@ -121,4 +123,4 @@ nz-header {
   box-shadow: none;
   line-height: 1;
 }
-}*/
+}

@@ -5,7 +5,7 @@ export interface ExamSession { id: string; name: string; startDate: string; endD
 export interface ExamSlot {
   id: string; courseId: string; courseCode: string; courseName: string;
   date: string; startTime: string; durationMin: number; roomId: string; roomName: string;
-  proctorsNeeded: number; note?: string;
+  proctorsNeeded: number; note?: string; action: string; 
 }
 export interface Assignment {
   id: string; slotId: string; lecturerId: string; role: 'proctor'|'supervisor';

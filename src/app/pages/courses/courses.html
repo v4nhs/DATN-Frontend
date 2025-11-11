@@ -1,9 +1,24 @@
-<link rel="stylesheet" href="./courses.css">
-<input nz-input placeholder="Tìm..." [(ngModel)]="kw" style="max-width:240px;margin-bottom:8px">
-<div nz-col nzSpan="4">
-      <button nz-button nzType="primary" type="button">Thêm mới</button>
+<form nz-form class="filter">
+  <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
+    
+    <div nz-col nzFlex="1">
+      <div nz-row [nzGutter]="12">
+        <div nz-col nzFlex="1">
+          <input nz-input placeholder="Tìm mã HP, tên HP..." 
+            [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div nz-col>
+          <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
+        </div>
+      </div>
     </div>
-<nz-table [nzData]="filtered" nzBordered>
+    <div nz-col>
+      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
+    </div>
+  </div>
+</form>
+
+<nz-table [nzData]="filteredData" nzBordered>
   <thead>
     <tr>
       <th>Mã</th>
@@ -13,17 +28,51 @@
     </tr>
   </thead>
   <tbody>
-    @for (c of filtered; track c) {
+    @for (c of filteredData; track c.id) {
     <tr>
       <td>{{c.code}}</td>
       <td>{{c.name}}</td>
       <td>{{c.credits}}</td>
       <td>
-        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" />
-        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" />
-        <!-- {{c.action}} -->
+        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(c)" />
+        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteCourse(c.id)" />
       </td>
     </tr>
     }
   </tbody>
 </nz-table>
+
+<nz-modal 
+  [(nzVisible)]="isVisible" 
+  [nzTitle]="isEditing ? 'Cập nhật học phần' : 'Thêm học phần mới'" 
+  (nzOnCancel)="handleCancel()" 
+  (nzOnOk)="handleOk()">
+
+  <ng-container *nzModalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Mã HP</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập mã học phần" 
+            [(ngModel)]="courseForm.code" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Tên HP</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập tên học phần" 
+            [(ngModel)]="courseForm.name" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Số tín chỉ</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input type="number" 
+            [(ngModel)]="courseForm.credits" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container> 
+</nz-modal>

@@ -1,4 +1,67 @@
-<nz-table [nzData]="data" nzBordered>
-  <thead><tr><th>Phòng</th><th>Sức chứa</th></tr></thead>
-  <tbody>@for (r of data; track r) { <tr><td>{{r.name}}</td><td>{{r.capacity}}</td></tr> }</tbody>
+<form nz-form class="filter">
+  <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
+    
+    <div nz-col nzFlex="1">
+      <div nz-row [nzGutter]="12">
+        <div nz-col nzFlex="1">
+          <input nz-input placeholder="Tìm tên phòng..." 
+            [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div nz-col>
+          <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
+        </div>
+      </div>
+    </div>
+    <div nz-col>
+      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
+    </div>
+  </div>
+</form>
+
+<nz-table [nzData]="filteredData" nzBordered>
+  <thead>
+    <tr>
+      <th>Phòng</th>
+      <th>Sức chứa</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (r of filteredData; track r.id) { 
+    <tr>
+      <td>{{r.name}}</td>
+      <td>{{r.capacity}}</td>
+      <td>
+        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(r)" />
+        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteRoom(r.id)" />
+      </td>
+    </tr> }
+  </tbody>
 </nz-table>
+
+<nz-modal 
+  [(nzVisible)]="isVisible" 
+  [nzTitle]="isEditing ? 'Cập nhật phòng học' : 'Thêm phòng học mới'" 
+  (nzOnCancel)="handleCancel()" 
+  (nzOnOk)="handleOk()">
+  
+  <ng-container *nzModalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Tên phòng</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập tên phòng (ví dụ: A101)" 
+            [(ngModel)]="roomForm.name" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Sức chứa</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input type="number" 
+            [(ngModel)]="roomForm.capacity" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control> 
+      </nz-form-item>
+    </form>
+  </ng-container> 
+</nz-modal>

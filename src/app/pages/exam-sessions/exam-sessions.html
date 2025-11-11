@@ -1,4 +1,75 @@
-<nz-table [nzData]="data" nzBordered>
-  <thead><tr><th>Tên đợt</th><th>Bắt đầu</th><th>Kết thúc</th></tr></thead>
-  <tbody>@for (e of data; track e) { <tr><td>{{e.name}}</td><td>{{e.startDate}}</td><td>{{e.endDate}}</td></tr> }</tbody>
+<form nz-form class="filter">
+  <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
+    
+    <div nz-col nzFlex="1">
+      <div nz-row [nzGutter]="12">
+        <div nz-col nzFlex="1">
+          <input nz-input placeholder="Tìm tên đợt thi..." 
+            [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div nz-col>
+          <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
+        </div>
+      </div>
+    </div>
+    <div nz-col>
+      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
+    </div>
+  </div>
+</form>
+
+<nz-table [nzData]="filteredData" nzBordered>
+  <thead>
+    <tr>
+      <th>Tên đợt</th>
+      <th>Bắt đầu</th>
+      <th>Kết thúc</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (e of filteredData; track e) {
+    <tr>
+      <td>{{ e.name }}</td>
+      <td>{{ e.startDate }}</td>
+      <td>{{ e.endDate }}</td>
+      <td>
+        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(e)"></nz-icon>
+        <nz-icon class.bind="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteSession(e.id)"></nz-icon>
+      </td>
+    </tr>
+    }
+  </tbody>
 </nz-table>
+
+<nz-modal 
+  [(nzVisible)]="isVisible" 
+  [nzTitle]="isEditing ? 'Cập nhật đợt thi' : 'Thêm đợt thi mới'" 
+  (nzOnCancel)="handleCancel()" 
+  (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Tên đợt</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập tên đợt thi" [(ngModel)]="sessionForm.name"
+            [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Bắt đầu</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input type="date" [(ngModel)]="sessionForm.startDate" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Kết thúc</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input type="date" [(ngModel)]="sessionForm.endDate" [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container> 
+</nz-modal>

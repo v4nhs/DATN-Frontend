@@ -9,15 +9,15 @@ import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-layout',
   standalone: true,
   imports: [RouterLink, RouterOutlet, NzIconModule, NzLayoutModule, NzMenuModule, NzSpaceModule, NzButtonModule, NzDropDownModule, NzFlexModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  templateUrl: './layout.component.html', 
+  styleUrl: './layout.component.css' 
 })
-export class App {
-  // isCollapsed = false;
-  // log(): void {
-  //   console.log('click dropdown button');
-  // }
+export class LayoutComponent {
+  isCollapsed = false;
+  log(): void {
+    console.log('click dropdown button');
+  }
 }

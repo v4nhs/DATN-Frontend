@@ -19,3 +19,4 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), provideNzIcons(icons), provideNzI18n(vi_VN), provideAnimationsAsync(), provideHttpClient()
   ]
 };
+
