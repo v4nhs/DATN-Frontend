@@ -1,11 +1,11 @@
 <form nz-form class="filter">
   <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
-    
+
     <div nz-col nzFlex="1">
       <div nz-row [nzGutter]="12">
         <div nz-col nzFlex="1">
-          <input nz-input placeholder="Tìm mã HP, tên HP, phòng..." 
-            [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}">
+          <input nz-input placeholder="Tìm mã HP, tên HP, phòng..." [(ngModel)]="searchInput"
+            [ngModelOptions]="{standalone: true}">
         </div>
         <div nz-col>
           <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
@@ -42,7 +42,7 @@
       <td>{{ s.durationMin }}</td>
       <td>{{ s.roomName }}</td>
       <td>{{ s.proctorsNeeded }}</td>
-      <td></td>
+      <td>{{s.examForm}}</td>
       <td>
         <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(s)" />
         <nz-icon class.bind="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteSchedule(s.id)" />
@@ -52,69 +52,72 @@
   </tbody>
 </nz-table>
 
-<nz-modal 
-  [(nzVisible)]="isVisible" 
-  [nzTitle]="isEditing ? 'Cập nhật lịch thi' : 'Thêm lịch thi mới'" 
-  (nzOnCancel)="handleCancel()" 
-  (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật lịch thi' : 'Thêm lịch thi mới'"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
   <ng-container *nzModalContent>
     <form nz-form>
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Mã HP</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập mã học phần" 
-            [(ngModel)]="scheduleForm.courseCode" [ngModelOptions]="{standalone: true}" />
+          <input nz-input placeholder="Nhập mã học phần" [(ngModel)]="scheduleForm.courseCode"
+            [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Tên HP</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập tên học phần" 
-            [(ngModel)]="scheduleForm.courseName" [ngModelOptions]="{standalone: true}" />
+          <input nz-input placeholder="Nhập tên học phần" [(ngModel)]="scheduleForm.courseName"
+            [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Ngày</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input type="date" 
-            [(ngModel)]="scheduleForm.date" [ngModelOptions]="{standalone: true}" />
+          <input nz-input type="date" [(ngModel)]="scheduleForm.date" [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Giờ</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input type="time" 
-            [(ngModel)]="scheduleForm.startTime" [ngModelOptions]="{standalone: true}" />
+          <input nz-input type="time" [(ngModel)]="scheduleForm.startTime" [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Phút</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input type="number" placeholder="Nhập số phút" 
-            [(ngModel)]="scheduleForm.durationMin" [ngModelOptions]="{standalone: true}" />
+          <input nz-input type="number" placeholder="Nhập số phút" [(ngModel)]="scheduleForm.durationMin"
+            [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Phòng</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập tên phòng" 
-            [(ngModel)]="scheduleForm.roomName" [ngModelOptions]="{standalone: true}" />
+          <input nz-input placeholder="Nhập tên phòng" [(ngModel)]="scheduleForm.roomName"
+            [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6">Số CB</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input type="number" placeholder="Nhập số cán bộ" 
-            [(ngModel)]="scheduleForm.proctorsNeeded" [ngModelOptions]="{standalone: true}" />
+          <input nz-input type="number" placeholder="Nhập số cán bộ" [(ngModel)]="scheduleForm.proctorsNeeded"
+            [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Hình thức thi</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập hình thức" [(ngModel)]="scheduleForm.examForm"
+            [ngModelOptions]="{standalone: true}" />
         </nz-form-control>
       </nz-form-item>
     </form>
-  </ng-container> 
+  </ng-container>
 </nz-modal>

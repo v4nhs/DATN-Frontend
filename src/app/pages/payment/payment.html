@@ -1,35 +1,103 @@
+<form nz-form class="filter">
+  <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
+
+    <div nz-col nzFlex="1">
+      <div nz-row [nzGutter]="12">
+        <div nz-col nzFlex="1">
+          <input nz-input placeholder="Tìm mã, tên cán bộ..." [(ngModel)]="searchInput"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+        <div nz-col>
+          <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
+        </div>
+      </div>
+    </div>
+    <!-- <div nz-col>
+      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
+    </div> -->
+  </div>
+</form>
+
+<nz-table [nzData]="filteredData" nzBordered>
+  <thead>
+    <tr>
+      <th>Mã</th>
+      <th>Họ tên</th>
+      <th>Khoa</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (t of filteredData; track t.id) {
+    <tr>
+      <td>{{t.code}}</td>
+      <td>{{t.fullName}}</td>
+      <td>{{t.dept}}</td>
+      <td>
+        <div nz-col>
+          <button nz-button nzType="primary" type="button" (click)="showAddModal()">Tính tiền</button>
+        </div>
+        <!-- <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(t)" />
+        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteLecturer(t.id)" /> -->
+      </td>
+    </tr> }
+  </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật cán bộ' : 'Thêm cán bộ mới'"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+
+  <ng-container *nzModalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Mã CB</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập mã cán bộ" [(ngModel)]="lecturerForm.code"
+            [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Họ tên</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập họ và tên" [(ngModel)]="lecturerForm.fullName"
+            [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Khoa</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input placeholder="Nhập khoa/đơn vị" [(ngModel)]="lecturerForm.dept"
+            [ngModelOptions]="{standalone: true}" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+
 <div class="rules">
   <h3>Quy tắc tính tiền (demo)</h3>
 
   <div>Đơn giá (VNĐ/ca):
-    <nz-input-number
-      [ngModel]="baseRate()"
-      (ngModelChange)="baseRate.set($event)"
-      [nzStep]="5000">
+    <nz-input-number [ngModel]="baseRate()" (ngModelChange)="baseRate.set($event)" [nzStep]="5000">
     </nz-input-number>
   </div>
 
   <div>Hệ số GS:
-    <nz-input-number
-      [ngModel]="supervisorMultiplier()"
-      (ngModelChange)="supervisorMultiplier.set($event)"
+    <nz-input-number [ngModel]="supervisorMultiplier()" (ngModelChange)="supervisorMultiplier.set($event)"
       [nzStep]="0.1">
     </nz-input-number>
   </div>
 
   <div>Cuối tuần (+VNĐ):
-    <nz-input-number
-      [ngModel]="weekendBonus()"
-      (ngModelChange)="weekendBonus.set($event)"
-      [nzStep]="5000">
+    <nz-input-number [ngModel]="weekendBonus()" (ngModelChange)="weekendBonus.set($event)" [nzStep]="5000">
     </nz-input-number>
   </div>
 
   <div>Vượt 90' (+VNĐ/30'):
-    <nz-input-number
-      [ngModel]="overtimePer30Min()"
-      (ngModelChange)="overtimePer30Min.set($event)"
-      [nzStep]="5000">
+    <nz-input-number [ngModel]="overtimePer30Min()" (ngModelChange)="overtimePer30Min.set($event)" [nzStep]="5000">
     </nz-input-number>
   </div>
 </div>

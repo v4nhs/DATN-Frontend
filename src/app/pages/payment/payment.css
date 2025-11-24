@@ -1,0 +1,61 @@
+.icon-action {
+    margin: 0 14px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon-action:hover {
+    transform: scale(1.5);
+}
+
+.filter {
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.ant-table-wrapper .ant-table {
+    font-size: 16px;
+}
+
+
+[nz-input] {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-variant: tabular-nums;
+    list-style: none;
+    font-feature-settings: "tnum";
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    min-width: 0;
+    padding: 4px 11px;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 14px;
+    line-height: 1.5715;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.ant-modal-body {
+    padding: 20px !important;
+}
+
+nz-form-item {
+    margin-bottom: 16px;
+}
+
+nz-form-label {
+    font-weight: 500;
+}
+
+nz-input {
+    width: 100%;
+}
+
+[nz-form]:not(.ant-form-inline):not(.ant-form-vertical) {
+    max-width: 600px;
+}

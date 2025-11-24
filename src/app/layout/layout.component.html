@@ -8,7 +8,7 @@
       </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+      <li nz-submenu nzOpen nzTitle="Lịch thi sinh viên" nzIcon="schedule">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/dashboard">Tổng quan</a>
@@ -17,38 +17,46 @@
             <a routerLink="/exam-sessions">Đợt thi</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/schedule">Xếp lịch</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/assign">Phân công</a>
+            <a routerLink="/schedule">Ngày thi</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/courses">Học phần</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/lecturers">Cán bộ coi thi</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/rooms">Phòng thi</a>
           </li>
         </ul>
       </li>
-      <li nz-submenu nzOpen nzTitle="Form" nzIcon="form">
+
+
+      <li nz-submenu nzOpen nzTitle="Phân công coi thi" nzIcon="form">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/assign">Phân công</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/lecturers">Cán bộ coi thi</a>
+          </li>
+        </ul>
+      </li>
+
+      <li nz-submenu nzOpen nzTitle="Đối soát" nzIcon="bar-chart">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/payment">Tính tiền</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/payouts">Đối soát</a>
+            <a routerLink="/payouts">Thống kê</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/reports">Báo cáo</a>
           </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/settings">Thiết lập</a>
-          </li>
         </ul>
       </li>
+
+      <li nz-menu-item nzMatchRouter>
+        <a routerLink="/settings">Thiết lập</a>
+
     </ul>
   </nz-sider>
   <nz-layout>

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ Thêm inject, OnInit, ChangeDetectorRef
+import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -7,7 +7,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; // ✅ Thêm NzModalService
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-schedule',
@@ -26,7 +26,7 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; // ✅ Thê
   styleUrls: ['./schedule.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class Schedule implements OnInit { // ✅ Implement OnInit
+export class Schedule implements OnInit {
 
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
@@ -45,7 +45,8 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
       startTime: '07:30',
       durationMin: 90,
       roomName: 'A101',
-      proctorsNeeded: 2
+      proctorsNeeded: 2,
+      examForm: 'Thi viết'
     },
     {
       id: '2',
@@ -55,19 +56,20 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
       startTime: '09:30',
       durationMin: 60,
       roomName: 'A102',
-      proctorsNeeded: 2
+      proctorsNeeded: 2,
+      examForm: 'Thi viết'
     }
   ];
 
-  // ✅ Dữ liệu hiển thị (đã lọc)
+  // Dữ liệu hiển thị (đã lọc)
   filteredData: (typeof this.data) = [];
 
-  // ✅ Logic Form/Modal
+  // Logic Form/Modal
   isVisible = false;
   isEditing = false;
   editingId: string | null = null;
-  
-  // ✅ Đổi tên form model
+
+  // Đổi tên form model
   scheduleForm = {
     courseCode: '',
     courseName: '',
@@ -75,7 +77,8 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
     startTime: '',
     durationMin: 90,
     roomName: '',
-    proctorsNeeded: 2
+    proctorsNeeded: 2,
+    examForm: ''
   };
 
   // ✅ Gọi filterData() khi load
@@ -90,7 +93,7 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
     } else {
       const kw = this.keyword.toLowerCase();
       // Lọc theo Mã HP, Tên HP, hoặc Phòng
-      this.filteredData = this.data.filter(s => 
+      this.filteredData = this.data.filter(s =>
         s.courseCode.toLowerCase().includes(kw) ||
         s.courseName.toLowerCase().includes(kw) ||
         s.roomName.toLowerCase().includes(kw)
@@ -119,7 +122,8 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
       startTime: '',
       durationMin: 90,
       roomName: '',
-      proctorsNeeded: 2
+      proctorsNeeded: 2,
+      examForm: ''
     };
   }
 
@@ -136,7 +140,8 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
       startTime: schedule.startTime,
       durationMin: schedule.durationMin,
       roomName: schedule.roomName,
-      proctorsNeeded: schedule.proctorsNeeded
+      proctorsNeeded: schedule.proctorsNeeded,
+      examForm: schedule.examForm
     };
   }
 
@@ -169,8 +174,8 @@ export class Schedule implements OnInit { // ✅ Implement OnInit
       if (index !== -1) {
         // Giữ lại ID cũ, cập nhật các trường khác từ form
         this.data[index] = {
-          id: this.data[index].id, 
-          ...this.scheduleForm 
+          id: this.data[index].id,
+          ...this.scheduleForm
         };
         this.data = [...this.data]; // Gán lại mảng
       }
