@@ -27,62 +27,53 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   styleUrl: './courses.css',
   encapsulation: ViewEncapsulation.None
 })
-export class Courses implements OnInit { // ✅ 3. Implement OnInit
-  // ✅ 4. Inject services
+export class Courses implements OnInit {
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ✅ 5. Logic tìm kiếm (dọn dẹp 'kw' và 'keyword')
-  searchInput: string = ''; // Dùng cho ô input
-  keyword: string = ''; // Dùng để lọc
+  searchInput: string = '';
+  keyword: string = '';
 
   data = [
     {id:'C1', code:'HP001', name:'Toán cao cấp', credits:3, action:''},
     {id:'C2', code:'HP002', name:'Vật lý', credits:3, action:''}
   ];
 
-  // ✅ 6. THAY THẾ 'get filtered()'
   filteredData: (typeof this.data) = [];
 
-  // ✅ 7. Logic Form/Modal
   isVisible = false;
   isEditing = false;
   editingId: string | null = null;
-  
-  // ✅ 8. Đổi tên model
+ 
   courseForm = {
     code: '',
     name: '',
     credits: 3 
   };
 
-  // ✅ 9. Gọi filterData() khi load
   ngOnInit(): void {
     this.filterData();
   }
 
-  // ✅ 10. HÀM MỚI: Lọc dữ liệu thủ công
   filterData(): void {
     if (!this.keyword) {
       this.filteredData = this.data;
     } else {
       const kw = this.keyword.toLowerCase();
-      // Lọc theo Mã HP hoặc Tên HP
       this.filteredData = this.data.filter(x => 
         (x.code + x.name).toLowerCase().includes(kw)
       );
     }
-    // Buộc Angular cập nhật
     this.cdr.markForCheck();
   }
 
-  // ✅ 11. Cập nhật hàm tìm kiếm
+  // hàm tìm kiếm
   onSearch(): void {
-    this.keyword = this.searchInput; // Cập nhật keyword
-    this.filterData(); // Gọi lọc thủ công
+    this.keyword = this.searchInput;
+    this.filterData();
   }
 
-  // ✅ 12. Đổi tên hàm (Thêm mới)
+  // Đổi tên hàm
   showAddModal(): void {
     this.isEditing = false;
     this.editingId = null;
@@ -94,12 +85,11 @@ export class Courses implements OnInit { // ✅ 3. Implement OnInit
     };
   }
 
-  // ✅ 13. HÀM MỚI: Mở modal Sửa
+  // Mở modal Sửa
   showEditModal(course: (typeof this.data)[0]): void {
     this.isEditing = true;
     this.editingId = course.id;
     this.isVisible = true;
-    // Copy dữ liệu vào form
     this.courseForm = {
       code: course.code,
       name: course.name,
@@ -107,7 +97,6 @@ export class Courses implements OnInit { // ✅ 3. Implement OnInit
     };
   }
 
-  // ✅ 14. HÀM MỚI: Xóa
   deleteCourse(id: string): void {
     this.modal.confirm({
       nzTitle: 'Bạn có chắc chắn muốn xóa học phần này?',
@@ -123,7 +112,6 @@ export class Courses implements OnInit { // ✅ 3. Implement OnInit
     });
   }
 
-  // ✅ 15. Cập nhật hàm OK (cho cả Thêm và Sửa)
   handleOk(): void {
     if (!this.courseForm.code || !this.courseForm.name) {
       alert('Vui lòng nhập Mã và Tên học phần!');
@@ -131,20 +119,17 @@ export class Courses implements OnInit { // ✅ 3. Implement OnInit
     }
 
     if (this.isEditing && this.editingId) {
-      // --- LOGIC SỬA ---
       const index = this.data.findIndex(c => c.id === this.editingId);
       if (index !== -1) {
-        // Cập nhật dữ liệu tại vị trí đó
         this.data[index] = {
-          ...this.data[index], // Giữ lại 'id' và 'action'
+          ...this.data[index], 
           code: this.courseForm.code,
           name: this.courseForm.name,
           credits: this.courseForm.credits
         };
-        this.data = [...this.data]; // Gán lại mảng
+        this.data = [...this.data];
       }
     } else {
-      // --- LOGIC THÊM MỚI (Đã đúng) ---
       this.data = [
         ...this.data,
         {

@@ -27,11 +27,11 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; // ✅ Thê
   encapsulation: ViewEncapsulation.None,
 })
 export class Schedule implements OnInit { // ✅ Implement OnInit
-  // ✅ Inject services
+
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ✅ Logic tìm kiếm
+
   searchInput: string = '';
   keyword: string = '';
 

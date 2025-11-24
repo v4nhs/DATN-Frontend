@@ -21,6 +21,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden; /* Để bo góc cho ảnh */
   margin: 2rem; /* Thêm margin cho màn hình nhỏ */
+  background-image: url('https://cdn-media.sforum.vn/storage/app/media/truong-dai-hoc-kien-truc-ha-noi-thumb.jpg');
 }
 
 /* 3. Cột ảnh bên trái */

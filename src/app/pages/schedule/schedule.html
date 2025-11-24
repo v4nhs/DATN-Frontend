@@ -28,6 +28,7 @@
       <th>Phút</th>
       <th>Phòng</th>
       <th>Số CB</th>
+      <th>Hình thức thi</th>
       <th>Hành động</th>
     </tr>
   </thead>
@@ -41,6 +42,7 @@
       <td>{{ s.durationMin }}</td>
       <td>{{ s.roomName }}</td>
       <td>{{ s.proctorsNeeded }}</td>
+      <td></td>
       <td>
         <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(s)" />
         <nz-icon class.bind="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteSchedule(s.id)" />
