@@ -1,13 +1,14 @@
-import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. Thêm
+import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; // ✅ 2. Thêm
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-assign',
@@ -21,152 +22,185 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     NzGridModule,
     NzModalModule,
     NzFormModule,
-    NzInputModule],
+    NzInputModule,
+    NzSelectModule
+  ],
   templateUrl: './assign.html',
   styleUrls: ['./assign.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class Assign implements OnInit { // ✅ 3. Thêm
-  // ✅ 4. Inject services
+export class Assign implements OnInit {
+
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ✅ 5. Logic tìm kiếm
+  // =============================
+  // 1) DỮ LIỆU LỊCH THI (Schedule)
+  // =============================
+  scheduleList = [
+    { id: 's1', courseCode: 'HP001', date: '2025-01-05', startTime: '07:30', roomName: 'A101' },
+    { id: 's2', courseCode: 'HP002', date: '2025-01-06', startTime: '14:00', roomName: 'B201' }
+  ];
+
+  // =============================
+  // 2) DANH SÁCH CÁN BỘ
+  // =============================
+  lecturers = [
+    { fullName: "Nguyễn A", dept: "CNTT" },
+    { fullName: "Trần B", dept: "CNTT" },
+    { fullName: "Lê C", dept: "Toán" },
+    { fullName: "Phạm D", dept: "Toán" }
+  ];
+
+  // =============================
+  // 3) MAP phòng → khoa
+  // =============================
+  roomDeptMap: any = {
+    "A101": "CNTT",
+    "A102": "CNTT",
+    "B201": "Toán",
+    "B202": "Toán"
+  };
+
+  autoProctors: string[] = [];
+
+  // =============================
+  // 4) DỮ LIỆU PHÂN CÔNG
+  // =============================
   searchInput: string = '';
   keyword: string = '';
 
-  data = [{id: '1', slot: 'HP001 | 05/01 07:30 | A101', proctors: ['Nguyễn A', 'Trần B'], supervisor: 'Lê C' }];
-  
-  // ✅ 6. Dữ liệu hiển thị (đã lọc)
+  data = [
+    { id: '1', slot: 'HP001 | 05/01 | 07:30 | A101', proctors: ['Nguyễn A', 'Trần B'], supervisor: 'Lê C' }
+  ];
+
   filteredData: (typeof this.data) = [];
-  
-  // ✅ 7. Logic Form/Modal
+
   isVisible = false;
   isEditing = false;
   editingId: string | null = null;
-  
-  // ✅ 8. Đổi tên model
+
   assignmentForm = {
     slot: '',
-    proctors: '', // Đây là string, sẽ được xử lý
+    proctors: '',
     supervisor: ''
   };
 
-  // ✅ 9. Gọi filterData() khi load
   ngOnInit(): void {
     this.filterData();
   }
 
-  // ✅ 10. HÀM MỚI: Lọc dữ liệu thủ công
+  // =============================
+  // 5) CHỌN CA THI → TỰ ĐỘNG LOAD CÁN BỘ
+  // =============================
+  onSlotChange(scheduleId: string) {
+    const slot = this.scheduleList.find(s => s.id === scheduleId);
+    if (!slot) return;
+
+    const room = slot.roomName;
+    const dept = this.roomDeptMap[room];
+
+    // Lấy cán bộ theo khoa
+    this.autoProctors = this.lecturers
+      .filter(l => l.dept === dept)
+      .map(l => l.fullName);
+
+    // Gán tự động vào form
+    this.assignmentForm.proctors = this.autoProctors.join(", ");
+
+    // Format slot để lưu
+    this.assignmentForm.slot =
+      `${slot.courseCode} | ${slot.date} | ${slot.startTime} | ${slot.roomName}`;
+  }
+
+  // =============================
+  // 6) SEARCH 
+  // =============================
   filterData(): void {
     if (!this.keyword) {
       this.filteredData = this.data;
     } else {
       const kw = this.keyword.toLowerCase();
-      this.filteredData = this.data.filter(r => 
+      this.filteredData = this.data.filter(r =>
         r.slot.toLowerCase().includes(kw) ||
         r.supervisor.toLowerCase().includes(kw) ||
-        r.proctors.join(', ').toLowerCase().includes(kw) // Tìm kiếm bên trong mảng cán bộ
+        r.proctors.join(', ').toLowerCase().includes(kw)
       );
     }
-    // Buộc Angular cập nhật
     this.cdr.markForCheck();
   }
 
-  // ✅ 11. HÀM MỚI: Tìm kiếm
   onSearch(): void {
     this.keyword = this.searchInput;
     this.filterData();
   }
 
-  // ✅ 12. Đổi tên hàm (Thêm mới)
+  // =============================
+  // 7) MODAL
+  // =============================
   showAddModal(): void {
     this.isEditing = false;
-    this.editingId = null;
+    this.assignmentForm = { slot: '', proctors: '', supervisor: '' };
     this.isVisible = true;
-    this.assignmentForm = {
-      slot: '',
-      proctors: '',
-      supervisor: ''
-    };
   }
 
-  // ✅ 13. HÀM MỚI: Mở modal Sửa
-  showEditModal(assignment: (typeof this.data)[0]): void {
+  showEditModal(row: any): void {
     this.isEditing = true;
-    this.editingId = assignment.id;
-    this.isVisible = true;
-    // Gán dữ liệu vào form
+    this.editingId = row.id;
+
     this.assignmentForm = {
-      slot: assignment.slot,
-      proctors: assignment.proctors.join(', '), // CHUYỂN MẢNG THÀNH CHUỖI
-      supervisor: assignment.supervisor
+      slot: row.slot,
+      proctors: row.proctors.join(", "),
+      supervisor: row.supervisor
     };
+
+    this.isVisible = true;
   }
 
-  // ✅ 14. HÀM MỚI: Xóa
   deleteAssignment(id: string): void {
     this.modal.confirm({
-      nzTitle: 'Bạn có chắc chắn muốn xóa phân công này?',
-      nzContent: 'Hành động này sẽ xóa vĩnh viễn và không thể hoàn tác.',
-      nzOkText: 'Xóa',
-      nzOkType: 'primary',
+      nzTitle: 'Bạn có muốn xoá phân công?',
       nzOkDanger: true,
       nzOnOk: () => {
         this.data = this.data.filter(r => r.id !== id);
-        this.filterData(); // Cập nhật lại bảng
-      },
-      nzCancelText: 'Hủy'
+        this.filterData();
+      }
     });
   }
 
-  // ✅ 15. Cập nhật hàm OK (cho cả Thêm và Sửa)
   handleOk(): void {
-    if (!this.assignmentForm.slot || !this.assignmentForm.proctors || !this.assignmentForm.supervisor) {
-      alert('Vui lòng nhập đầy đủ thông tin!');
-      return;
-    }
 
-    // CHUYỂN CHUỖI (từ form) THÀNH MẢNG
     const proctorArray = this.assignmentForm.proctors
-      .split(',') 
-      .map(name => name.trim()) 
-      .filter(name => name.length > 0);
+      .split(',')
+      .map(x => x.trim())
+      .filter(x => x.length > 0);
 
     if (this.isEditing && this.editingId) {
-      // --- LOGIC SỬA ---
+
       const index = this.data.findIndex(r => r.id === this.editingId);
-      if (index !== -1) {
-        this.data[index] = {
-          id: this.data[index].id, // Giữ ID cũ
-          slot: this.assignmentForm.slot,
-          proctors: proctorArray, // Dùng mảng đã xử lý
-          supervisor: this.assignmentForm.supervisor
-        };
-        this.data = [...this.data]; // Gán lại mảng
-      }
+      this.data[index] = {
+        id: this.editingId,
+        slot: this.assignmentForm.slot,
+        proctors: proctorArray,
+        supervisor: this.assignmentForm.supervisor
+      };
+
     } else {
-      // --- LOGIC THÊM MỚI ---
-      this.data = [
-        ...this.data,
-        {
-          id: (this.data.length + 1).toString(),
-          slot: this.assignmentForm.slot,
-          proctors: proctorArray, // Dùng mảng đã xử lý
-          supervisor: this.assignmentForm.supervisor
-        }
-      ];
+
+      this.data.push({
+        id: (this.data.length + 1).toString(),
+        slot: this.assignmentForm.slot,
+        proctors: proctorArray,
+        supervisor: this.assignmentForm.supervisor
+      });
+
     }
 
     this.isVisible = false;
-    this.isEditing = false;
-    this.editingId = null;
-    this.filterData(); // Cập nhật lại bảng
+    this.filterData();
   }
 
   handleCancel(): void {
     this.isVisible = false;
-    this.isEditing = false;
-    this.editingId = null;
   }
 }

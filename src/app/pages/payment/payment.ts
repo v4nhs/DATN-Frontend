@@ -7,28 +7,24 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; 
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 
-type Role = 'proctor'|'supervisor';
-interface Row { id:string; lecturer:string; role:Role; date:'weekday'|'weekend'; durationMin:number; }
+type Role = 'proctor' | 'supervisor';
+interface Row { id: string; lecturer: string; role: Role; date: 'weekday' | 'weekend'; durationMin: number; }
 
 @Component({
   selector: 'app-payment',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    NzTableModule, 
-    NzInputNumberModule, 
-    NzSelectModule, 
-    NzButtonModule,
     CommonModule,
-    NzTableModule,
     FormsModule,
-    NzIconModule,
+    NzTableModule,
+    NzInputNumberModule,
+    NzSelectModule,
     NzButtonModule,
+    NzIconModule,
     NzGridModule,
     NzModalModule,
     NzFormModule,
@@ -39,24 +35,58 @@ interface Row { id:string; lecturer:string; role:Role; date:'weekday'|'weekend';
   encapsulation: ViewEncapsulation.None
 })
 export class Payment {
-  // Quy tắc tạm (bạn đổi ở Settings và đọc sang đây qua service khi có backend)
-  baseRate = signal(70000);               // VNĐ / ca tiêu chuẩn 60-90'
-  supervisorMultiplier = signal(1.2);     // hệ số giám sát
-  weekendBonus = signal(20000);           // cộng thêm cuối tuần
-  overtimePer30Min = signal(15000);       // cộng mỗi 30' vượt 90'
+
+  // ================================
+  //     QUY TẮC TẠM DEMO
+  // ================================
+  baseRate = signal(70000);               
+  supervisorMultiplier = signal(1.2);    
+  weekendBonus = signal(20000);          
+  overtimePer30Min = signal(15000);       
 
   rows = signal<Row[]>([
-    { id:'1', lecturer:'Nguyễn A', role:'proctor',    date:'weekday', durationMin:90 },
-    { id:'2', lecturer:'Trần B',   role:'supervisor', date:'weekend', durationMin:120 },
+    { id: '1', lecturer: 'Nguyễn A', role: 'proctor', date: 'weekday', durationMin: 90 },
+    { id: '2', lecturer: 'Trần B', role: 'supervisor', date: 'weekend', durationMin: 120 },
   ]);
 
+  // ===================================
+  // 🔥 FORM TÍNH TIỀN
+  // ===================================
+  examForm = {
+    sessions: 1,         // số ca
+    type: 'viet',        // viet | khac
+    studentCount: 0      // chỉ dùng nếu khác
+  };
+
+  totalAmount = 0;
+
+  calculateAmount() {
+    if (this.examForm.type === 'viet') {
+      this.totalAmount = this.examForm.sessions * 60000;   // thi viết
+    } else {
+      this.totalAmount = this.examForm.studentCount * 9000; // hình thức khác
+    }
+  }
+
+  // ===================================
+  //  TÍNH TIỀN TỰ ĐỘNG MỖI 200ms
+  // ===================================
+  watchFormChanges() {
+    setInterval(() => this.calculateAmount(), 200);
+  }
+
+  // ===================================
+  // TÍNH TIỀN DS GIÁM THỊ / GIẢNG VIÊN
+  // ===================================
   calc(row: Row): number {
     const base = this.baseRate();
     const roleMul = row.role === 'supervisor' ? this.supervisorMultiplier() : 1;
     const weekend = row.date === 'weekend' ? this.weekendBonus() : 0;
+
     const overtime = Math.max(0, row.durationMin - 90);
     const steps = Math.ceil(overtime / 30);
     const overtimeMoney = steps > 0 ? steps * this.overtimePer30Min() : 0;
+
     return Math.round(base * roleMul + weekend + overtimeMoney);
   }
 
@@ -64,136 +94,81 @@ export class Payment {
 
   addRow(): void {
     const n = (this.rows().length + 1).toString();
-    this.rows.update(list => [...list, { id:n, lecturer:`Giảng viên ${n}`, role:'proctor', date:'weekday', durationMin:90 }]);
+    this.rows.update(list => [
+      ...list,
+      {
+        id: n,
+        lecturer: `Giảng viên ${n}`,
+        role: 'proctor',
+        date: 'weekday',
+        durationMin: 90
+      }
+    ]);
   }
 
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ✅ 5. Logic tìm kiếm
-  searchInput: string = ''; 
-  keyword: string = '';    
+  // ===================================
+  //     TÌM KIẾM GIẢNG VIÊN
+  // ===================================
+  searchInput: string = '';
+  keyword: string = '';
 
-  data = [{ id: 'L1', code: 'CB001', fullName: 'Nguyễn A', dept: 'CNTT' }];
+  data = [
+    { id: 'L1', code: 'CB001', fullName: 'Nguyễn A', dept: 'CNTT' }
+  ];
 
-  // ✅ 6. THAY THẾ 'get filteredData()'
   filteredData: (typeof this.data) = [];
 
-  // ✅ 7. Logic Form/Modal
-  isVisible = false;
-  isEditing = false;
-  editingId: string | null = null;
-  
-  // ✅ 8. Đổi tên model
   lecturerForm = {
     code: '',
     fullName: '',
     dept: ''
   };
 
-  // ✅ 9. Gọi filterData() khi load
-  ngOnInit(): void {
-    this.filterData();
-  }
-
-  // ✅ 10. HÀM MỚI: Lọc dữ liệu thủ công
+  // ============================
+  // ⚡ HÀM LỌC DỮ LIỆU
+  // ============================
   filterData(): void {
     if (!this.keyword) {
       this.filteredData = this.data;
     } else {
       const kw = this.keyword.toLowerCase();
-      // Lọc theo Mã CB hoặc Họ tên
       this.filteredData = this.data.filter(t =>
         (t.code + t.fullName).toLowerCase().includes(kw)
       );
     }
-    // Buộc Angular cập nhật
     this.cdr.markForCheck();
   }
 
-  // ✅ 11. HÀM MỚI: Tìm kiếm
   onSearch(): void {
-    this.keyword = this.searchInput; // Cập nhật keyword
-    this.filterData(); // Gọi lọc thủ công
+    this.keyword = this.searchInput;
+    this.filterData();
   }
 
-  // ✅ 12. Đổi tên hàm (Thêm mới)
-  showAddModal(): void {
-    this.isEditing = false;
-    this.editingId = null;
-    this.isVisible = true;
-    this.lecturerForm = {
-      code: '',
-      fullName: '',
-      dept: ''
-    };
-  }
+  // ================================
+  //        MODAL XỬ LÝ
+  // ================================
+  isVisible = false;
+  isEditing = false;
+  editingId: string | null = null;
 
-  // ✅ 13. HÀM MỚI: Mở modal Sửa
-  showEditModal(lecturer: (typeof this.data)[0]): void {
-    this.isEditing = true;
-    this.editingId = lecturer.id;
-    this.isVisible = true;
-    // Copy dữ liệu vào form
-    this.lecturerForm = { ...lecturer };
-  }
-
-  // ✅ 14. HÀM MỚI: Xóa
-  deleteLecturer(id: string): void {
-    this.modal.confirm({
-      nzTitle: 'Bạn có chắc chắn muốn xóa cán bộ này?',
-      nzContent: 'Hành động này sẽ xóa vĩnh viễn và không thể hoàn tác.',
-      nzOkText: 'Xóa',
-      nzOkType: 'primary',
-      nzOkDanger: true,
-      nzOnOk: () => {
-        this.data = this.data.filter(l => l.id !== id);
-        this.filterData(); // Cập nhật lại bảng
-      },
-      nzCancelText: 'Hủy'
-    });
-  }
-
-  // ✅ 15. Cập nhật hàm OK (cho cả Thêm và Sửa)
-  handleOk(): void {
-    if (!this.lecturerForm.code || !this.lecturerForm.fullName) {
-      alert('Vui lòng nhập Mã và Họ tên cán bộ!');
-      return;
-    }
-
-    if (this.isEditing && this.editingId) {
-      // --- LOGIC SỬA ---
-      const index = this.data.findIndex(l => l.id === this.editingId);
-      if (index !== -1) {
-        // Cập nhật dữ liệu
-        this.data[index] = {
-          id: this.data[index].id, // Giữ lại ID
-          code: this.lecturerForm.code,
-          fullName: this.lecturerForm.fullName,
-          dept: this.lecturerForm.dept
-        };
-        this.data = [...this.data]; // Gán lại mảng
-      }
-    } else {
-      // --- LOGIC THÊM MỚI (Đã đúng) ---
-      this.data = [
-        ...this.data,
-        {
-          id: `L${this.data.length + 1}`,
-          ...this.lecturerForm
-        }
-      ];
-    }
-    
+  handleOk() {
+    this.calculateAmount();
+    console.log("Tổng tiền:", this.totalAmount);
     this.isVisible = false;
-    this.isEditing = false;
-    this.editingId = null;
-    this.filterData(); // Cập nhật lại bảng
   }
 
-  handleCancel(): void {
+  handleCancel() {
     this.isVisible = false;
-    this.isEditing = false;
-    this.editingId = null;
+  }
+
+  // ================================
+  //   KHỞI TẠO (CHỈ DUY NHẤT 1 LẦN)
+  // ================================
+  ngOnInit(): void {
+    this.filterData();
+    this.watchFormChanges();
   }
 }

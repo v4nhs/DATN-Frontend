@@ -7,11 +7,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, NzIconModule, NzLayoutModule, NzMenuModule, NzSpaceModule, NzButtonModule, NzDropDownModule, NzFlexModule],
+  imports: [RouterLink, RouterOutlet, NzIconModule, NzLayoutModule, NzMenuModule, NzSpaceModule, NzButtonModule, NzDropDownModule, NzFlexModule, NzSelectModule],
   templateUrl: './layout.component.html', 
   styleUrl: './layout.component.css' 
 })

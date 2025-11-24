@@ -201,4 +201,8 @@ export class Schedule implements OnInit {
     this.isEditing = false;
     this.editingId = null;
   }
+
+  getScheduleList() {
+    return this.filteredData;
+  }
 }

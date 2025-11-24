@@ -1,6 +1,5 @@
 <form nz-form class="filter">
   <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
-
     <div nz-col nzFlex="1">
       <div nz-row [nzGutter]="12">
         <div nz-col nzFlex="1">
@@ -12,9 +11,6 @@
         </div>
       </div>
     </div>
-    <!-- <div nz-col>
-      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
-    </div> -->
   </div>
 </form>
 
@@ -24,80 +20,101 @@
       <th>Mã</th>
       <th>Họ tên</th>
       <th>Khoa</th>
+      <th>Hình thức thi</th> <!-- 🆕 mới thêm -->
+      <th>Tổng tiền</th>
       <th>Hành động</th>
     </tr>
   </thead>
+
   <tbody>
     @for (t of filteredData; track t.id) {
     <tr>
       <td>{{t.code}}</td>
       <td>{{t.fullName}}</td>
       <td>{{t.dept}}</td>
+
+      <!-- 🆕 HIỂN THỊ HÌNH THỨC -->
       <td>
-        <div nz-col>
-          <button nz-button nzType="primary" type="button" (click)="showAddModal()">Tính tiền</button>
-        </div>
-        <!-- <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(t)" />
-        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteLecturer(t.id)" /> -->
+        <span *ngIf="examForm.type === 'viet'">Thi viết</span>
+        <span *ngIf="examForm.type === 'khac'">Hình thức khác</span>
       </td>
-    </tr> }
+
+      <!-- TỔNG TIỀN -->
+      <td>{{ totalAmount | number:'1.0-0' }} VND</td>
+
+      <td>
+        <button nz-button nzType="primary" type="button" (click)="isVisible = true">
+          Tính tiền
+        </button>
+      </td>
+    </tr>
+    }
   </tbody>
 </nz-table>
 
-<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật cán bộ' : 'Thêm cán bộ mới'"
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Tính tiền coi thi"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
   <ng-container *nzModalContent>
     <form nz-form>
+
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Mã CB</nz-form-label>
+        <nz-form-label [nzSpan]="6">Số ca</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập mã cán bộ" [(ngModel)]="lecturerForm.code"
-            [ngModelOptions]="{standalone: true}" />
+          <nz-input-number [(ngModel)]="examForm.sessions" [ngModelOptions]="{standalone: true}" [nzMin]="1"></nz-input-number>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Họ tên</nz-form-label>
+        <nz-form-label [nzSpan]="6">Hình thức</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập họ và tên" [(ngModel)]="lecturerForm.fullName"
-            [ngModelOptions]="{standalone: true}" />
+          <nz-select [(ngModel)]="examForm.type"
+            [ngModelOptions]="{standalone: true}"
+            nzPlaceHolder="Chọn hình thức thi">
+
+            <nz-option nzValue="viet" nzLabel="Thi viết"></nz-option>
+            <nz-option nzValue="khac" nzLabel="Hình thức khác"></nz-option>
+
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="examForm.type === 'khac'">
+        <nz-form-label [nzSpan]="6">Số sinh viên</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-input-number [(ngModel)]="examForm.studentCount"
+            [ngModelOptions]="{standalone: true}"
+            [nzMin]="1"></nz-input-number>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Khoa</nz-form-label>
+        <nz-form-label [nzSpan]="6">Tổng tiền</nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập khoa/đơn vị" [(ngModel)]="lecturerForm.dept"
-            [ngModelOptions]="{standalone: true}" />
+          <input nz-input readonly [value]="totalAmount | number:'1.0-0'">
         </nz-form-control>
       </nz-form-item>
+
     </form>
   </ng-container>
-</nz-modal>
 
+</nz-modal>
 
 <div class="rules">
   <h3>Quy tắc tính tiền (demo)</h3>
 
   <div>Đơn giá (VNĐ/ca):
-    <nz-input-number [ngModel]="baseRate()" (ngModelChange)="baseRate.set($event)" [nzStep]="5000">
-    </nz-input-number>
-  </div>
-
-  <div>Hệ số GS:
-    <nz-input-number [ngModel]="supervisorMultiplier()" (ngModelChange)="supervisorMultiplier.set($event)"
-      [nzStep]="0.1">
-    </nz-input-number>
+    <nz-input-number [ngModel]="baseRate()" 
+      (ngModelChange)="baseRate.set($event)" [nzStep]="5000"></nz-input-number>
   </div>
 
   <div>Cuối tuần (+VNĐ):
-    <nz-input-number [ngModel]="weekendBonus()" (ngModelChange)="weekendBonus.set($event)" [nzStep]="5000">
-    </nz-input-number>
+    <nz-input-number [ngModel]="weekendBonus()" 
+      (ngModelChange)="weekendBonus.set($event)" [nzStep]="5000"></nz-input-number>
   </div>
 
   <div>Vượt 90' (+VNĐ/30'):
-    <nz-input-number [ngModel]="overtimePer30Min()" (ngModelChange)="overtimePer30Min.set($event)" [nzStep]="5000">
-    </nz-input-number>
+    <nz-input-number [ngModel]="overtimePer30Min()" 
+      (ngModelChange)="overtimePer30Min.set($event)" [nzStep]="5000"></nz-input-number>
   </div>
 </div>
