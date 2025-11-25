@@ -1,7 +1,37 @@
-<h2>Tổng quan hệ thống</h2>
-<ul>
-  <li>Tổng số đợt thi: 3</li>
-  <li>Tổng số ca thi: 12</li>
-  <li>Tổng số cán bộ: 58</li>
-  <li>Tổng tiền dự kiến: 120.000.000 VNĐ</li>
-</ul>
+<div class="dashboard">
+
+  <h2 class="title">Tổng quan hệ thống</h2>
+
+  <!-- THỐNG KÊ NHANH -->
+  <div class="stats-grid">
+
+    <nz-card class="stat-card">
+      <nz-statistic [nzValue]="totalExamRounds" [nzTitle]="'Tổng số đợt thi'"></nz-statistic>
+    </nz-card>
+
+    <nz-card class="stat-card">
+      <nz-statistic [nzValue]="totalExamSlots" [nzTitle]="'Tổng số ca thi'"></nz-statistic>
+    </nz-card>
+
+    <nz-card class="stat-card">
+      <nz-statistic [nzValue]="totalStaff" [nzTitle]="'Tổng số cán bộ'"></nz-statistic>
+    </nz-card>
+
+    <nz-card class="stat-card">
+      <nz-statistic 
+        [nzValue]="totalMoney" 
+        [nzTitle]="'Tổng tiền dự kiến'" 
+        [nzPrefix]="'₫'">
+      </nz-statistic>
+    </nz-card>
+
+  </div>
+
+
+  <!-- BIỂU ĐỒ TỔNG QUAN -->
+  <div class="chart-block">
+    <h2 class="title">Biểu đồ tổng quan</h2>
+    <div echarts [options]="chartOptions" class="chart"></div>
+  </div>
+
+</div>

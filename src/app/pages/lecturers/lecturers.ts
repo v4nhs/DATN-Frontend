@@ -1,11 +1,11 @@
-import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. Thêm
+import { Component, ViewEncapsulation, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FormsModule } from '@angular/forms';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; // ✅ 2. Thêm
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'; 
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 
@@ -27,14 +27,13 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   styleUrl: './lecturers.css',
   encapsulation: ViewEncapsulation.None
 })
-export class Lecturers implements OnInit { // ✅ 3. Implement OnInit
-  // ✅ 4. Inject services
+export class Lecturers implements OnInit {
   private modal = inject(NzModalService);
   private cdr = inject(ChangeDetectorRef);
 
   // ✅ 5. Logic tìm kiếm
-  searchInput: string = ''; // Dùng cho ô input
-  keyword: string = '';     // Dùng để lọc
+  searchInput: string = ''; 
+  keyword: string = '';    
 
   data = [{ id: 'L1', code: 'CB001', fullName: 'Nguyễn A', dept: 'CNTT' }];
 
