@@ -4,9 +4,8 @@
     <div nz-col nzFlex="1">
       <div nz-row [nzGutter]="12">
         <div nz-col nzFlex="1">
-          <input nz-input placeholder="Tìm ca thi, cán bộ, giám sát..." 
-                 [(ngModel)]="searchInput" 
-                 [ngModelOptions]="{standalone: true}">
+          <input nz-input placeholder="Tìm ca thi, cán bộ, giám sát..." [(ngModel)]="searchInput"
+            [ngModelOptions]="{standalone: true}">
         </div>
         <div nz-col>
           <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
@@ -25,7 +24,7 @@
   <thead>
     <tr>
       <th>Ca thi</th>
-      <th>Cán bộ</th>
+      <th>Số cán bộ</th>
       <th>Giám sát</th>
       <th>Hành động</th>
     </tr>
@@ -33,15 +32,17 @@
 
   <tbody>
     @for (r of filteredData; track r.id) {
-      <tr>
-        <td>{{r.slot}}</td>
-        <td>{{r.proctors.join(', ')}}</td>
-        <td>{{r.supervisor}}</td>
-        <td>
-          <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(r)" />
-          <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteAssignment(r.id)" />
-        </td>
-      </tr>
+    <tr>
+      <td>{{r.slot}}</td>
+      <td>{{r.proctors.join(', ')}}</td>
+      <td>{{r.supervisor}}</td>
+      <td>
+        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(r)" />
+        <nz-icon class="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteAssignment(r.id)" />
+        <nz-icon class="icon-action" nzType="eye" nzTheme="twotone" (click)="showDetail(r)" />
+        <!-- <nz-icon class="icon-action" nzType="eye" nzTheme="twotone" /> -->
+      </td>
+    </tr>
     }
   </tbody>
 </nz-table>
@@ -50,11 +51,8 @@
 <!-- ==============================
        MODAL PHÂN CÔNG
 ================================-->
-<nz-modal 
-  [(nzVisible)]="isVisible" 
-  [nzTitle]="isEditing ? 'Cập nhật phân công' : 'Thêm phân công mới'" 
-  (nzOnCancel)="handleCancel()" 
-  (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật phân công' : 'Thêm phân công mới'"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
   <ng-container *nzModalContent>
     <form nz-form>
@@ -64,16 +62,10 @@
         <nz-form-label [nzSpan]="6">Ca thi</nz-form-label>
         <nz-form-control [nzSpan]="16">
 
-          <nz-select
-            nzPlaceHolder="Chọn ca thi"
-            [(ngModel)]="assignmentForm.slot"
-            (ngModelChange)="onSlotChange($event)"
-            [ngModelOptions]="{standalone: true}"
-            style="width: 100%">
+          <nz-select nzPlaceHolder="Chọn ca thi" [(ngModel)]="assignmentForm.slot"
+            (ngModelChange)="onSlotChange($event)" [ngModelOptions]="{standalone: true}" style="width: 100%">
 
-            <nz-option
-              *ngFor="let s of scheduleList"
-              [nzValue]="s.id"
+            <nz-option *ngFor="let s of scheduleList" [nzValue]="s.id"
               [nzLabel]="s.courseCode + ' | ' + s.date + ' | ' + s.startTime + ' | ' + s.roomName">
             </nz-option>
 
@@ -99,6 +91,40 @@
       </nz-form-item>
 
     </form>
+  </ng-container>
+
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isDetailVisible" nzTitle="Chi tiết phân công" (nzOnCancel)="isDetailVisible = false"
+  [nzFooter]="null">
+
+  <ng-container *nzModalContent>
+
+    <nz-table nzBordered [nzData]="[detailData]">
+      <thead>
+        <tr>
+          <th>Mã HP</th>
+          <th>Ngày</th>
+          <th>Giờ</th>
+          <th>Phòng</th>
+          <th>Cán bộ</th>
+          <th>Giám sát</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="detailData">
+          <td>{{ detailData.slot.split(' | ')[0] }}</td>
+          <td>{{ detailData.slot.split(' | ')[1] }}</td>
+          <td>{{ detailData.slot.split(' | ')[2] }}</td>
+          <td>{{ detailData.slot.split(' | ')[3] }}</td>
+          <td>{{ detailData.proctors.join(', ') }}</td>
+          <td>{{ detailData.supervisor }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+
   </ng-container>
 
 </nz-modal>

@@ -71,7 +71,7 @@ export class Assign implements OnInit {
   keyword: string = '';
 
   data = [
-    { id: '1', slot: 'HP001 | 05/01 | 07:30 | A101', proctors: ['Nguyễn A', 'Trần B'], supervisor: 'Lê C' }
+    { id: '1', slot: 'HP001 | 05/01 | 07:30 | A101', proctors: ['2'], supervisor: 'Lê C' }
   ];
 
   filteredData: (typeof this.data) = [];
@@ -79,6 +79,10 @@ export class Assign implements OnInit {
   isVisible = false;
   isEditing = false;
   editingId: string | null = null;
+
+  isView = false;
+  isDetailVisible = false;
+  detailData: any = null;
 
   assignmentForm = {
     slot: '',
@@ -155,6 +159,37 @@ export class Assign implements OnInit {
     };
 
     this.isVisible = true;
+  }
+
+  showDetail(row: any): void {
+    this.isView = true;
+    this.detailData = row;
+    this.isDetailVisible = true;
+
+    // 1. Tách các phần từ slot
+    const parts = row.slot.split(" | ");
+    const courseCode = parts[0];
+    const date = parts[1];
+    const time = parts[2];
+    const room = parts[3];
+
+    // 2. Tìm trong scheduleList
+    const schedule = this.scheduleList.find(s =>
+      s.courseCode === courseCode &&
+      s.date === date &&
+      s.startTime === time &&
+      s.roomName === room
+    );
+
+    // 3. Map dữ liệu chi tiết
+    this.detailData = {
+      ...schedule,
+      proctors: row.proctors,
+      supervisor: row.supervisor
+    };
+
+
+    this.isDetailVisible = true;
   }
 
   deleteAssignment(id: string): void {
