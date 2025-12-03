@@ -1,123 +1,208 @@
-<form nz-form class="filter">
-  <div nz-row [nzGutter]="12" nzJustify="space-between" nzAlign="middle">
+<!-- ===============================
+     FILTER BAR 
+================================ -->
+<div class="filter-bar">
+  <div nz-row nzGutter="12" nzAlign="middle">
 
-    <div nz-col nzFlex="1">
-      <div nz-row [nzGutter]="12">
-        <div nz-col nzFlex="1">
-          <input nz-input placeholder="Tìm mã HP, tên HP, phòng..." [(ngModel)]="searchInput"
-            [ngModelOptions]="{standalone: true}">
-        </div>
-        <div nz-col>
-          <button nz-button nzType="primary" type="button" (click)="onSearch()">Tìm kiếm</button>
-        </div>
-      </div>
+    <!-- GIỚI HẠN CHIỀU RỘNG INPUT -->
+    <div nz-col nzSpan="6" class="input-wrapper">
+      <input nz-input class="small-input"
+             placeholder="Tìm mã HP, tên HP..."
+             [(ngModel)]="searchInput"
+             [ngModelOptions]="{ standalone: true }">
+    </div>
+
+    <div nz-col nzSpan="4" class="right">
+      <button nz-button nzType="primary" class="btn-small" (click)="onSearch()">
+        Tìm kiếm
+      </button>
     </div>
     <div nz-col>
-      <button nz-button nzType="primary" type="button" (click)="showAddModal()">Thêm mới</button>
+      <button nz-button nzType="primary" class="btn-small" (click)="showAddModal()">Thêm mới</button>
     </div>
+
+
   </div>
-</form>
 
-<nz-table [nzData]="filteredData" nzBordered>
-  <thead>
-    <tr>
-      <th>Mã HP</th>
-      <th>Tên HP</th>
-      <th>Ngày</th>
-      <th>Giờ</th>
-      <th>Phút</th>
-      <th>Phòng</th>
-      <th>Số CB</th>
-      <th>Hình thức thi</th>
-      <th>Hành động</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (s of filteredData; track s.id) {
-    <tr>
-      <td>{{ s.courseCode }}</td>
-      <td>{{ s.courseName }}</td>
-      <td>{{ s.date }}</td>
-      <td>{{ s.startTime }}</td>
-      <td>{{ s.durationMin }}</td>
-      <td>{{ s.roomName }}</td>
-      <td>{{ s.proctorsNeeded }}</td>
-      <td>{{s.examForm}}</td>
-      <td>
-        <nz-icon class="icon-action" nzType="edit" nzTheme="twotone" (click)="showEditModal(s)" />
-        <nz-icon class.bind="icon-action" nzType="delete" nzTheme="twotone" (click)="deleteSchedule(s.id)" />
-      </td>
-    </tr>
-    }
-  </tbody>
-</nz-table>
+  <!-- Hàng nút thứ 2 -->
+  <div nz-row nzGutter="12" class="right second-row">
 
-<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật lịch thi' : 'Thêm lịch thi mới'"
-  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <div nz-col>
+      <button nz-button nzType="default" class="btn-small" (click)="showBatchModal()">Tạo đợt thi</button>
+    </div>
+
+    <div nz-col>
+      <button nz-button nzType="default" class="btn-small" (click)="exportExcel()">Xuất Excel</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===============================
+     DANH SÁCH ĐỢT THI
+================================ -->
+<h3 style="margin-top: 20px;">Danh sách đợt thi</h3>
+
+<nz-tabset [(nzSelectedIndex)]="selectedBatchTabIndex" (nzSelectedIndexChange)="onBatchTabChange($event)">
+
+  <nz-tab *ngFor="let b of examBatches; let i = index" [nzTitle]="b.batchName">
+
+    <!-- Bảng lịch thi từng đợt -->
+    <nz-table [nzData]="getSchedulesByBatch(b.batchId)" nzBordered [nzFrontPagination]="false" [nzPageSize]="5"
+      nzShowPagination>
+
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Mã HP</th>
+          <th>Tên HP</th>
+          <th>Ngày thi</th>
+          <th>Giờ thi</th>
+          <th>Số CB</th>
+          <th>Ghi chú</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (s of getSchedulesByBatch(b.batchId); let i = $index; track s.id) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ s.courseCode }}</td>
+          <td>{{ s.courseName }}</td>
+          <td>{{ s.date }}</td>
+          <td>{{ s.examTime }}</td>
+          <td>{{ s.proctorsNeeded }}</td>
+          <td>{{ s.note }}</td>
+
+          <td>
+            <nz-icon nzType="edit" nzTheme="twotone" class="icon-action" (click)="showEditModal(s)">
+            </nz-icon>
+
+            <nz-icon nzType="delete" nzTheme="twotone" class="icon-action" (click)="deleteSchedule(s.id)">
+            </nz-icon>
+          </td>
+        </tr>
+        }
+      </tbody>
+
+    </nz-table>
+
+  </nz-tab>
+
+</nz-tabset>
+
+<!-- ======================================================
+     MODAL TẠO / SỬA ĐỢT THI
+====================================================== -->
+<nz-modal [(nzVisible)]="isBatchVisible" [nzTitle]="isEditingBatch ? 'Cập nhật đợt thi' : 'Tạo đợt thi'"
+  (nzOnCancel)="handleBatchCancel()" (nzOnOk)="handleBatchOk()">
 
   <ng-container *nzModalContent>
     <form nz-form>
+
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Mã HP</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập mã học phần" [(ngModel)]="scheduleForm.courseCode"
-            [ngModelOptions]="{standalone: true}" />
+        <nz-form-label nzSpan="6">Tên đợt thi</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input [(ngModel)]="batchForm.batchName" [ngModelOptions]="{ standalone: true }">
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Tên HP</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập tên học phần" [(ngModel)]="scheduleForm.courseName"
-            [ngModelOptions]="{standalone: true}" />
+        <nz-form-label nzSpan="6">Ngày bắt đầu</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="date" [(ngModel)]="batchForm.startDate" [ngModelOptions]="{ standalone: true }">
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="6">Ngày</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input type="date" [(ngModel)]="scheduleForm.date" [ngModelOptions]="{standalone: true}" />
+        <nz-form-label nzSpan="6">Ngày kết thúc</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="date" [(ngModel)]="batchForm.endDate" [ngModelOptions]="{ standalone: true }">
         </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">Giờ</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input type="time" [(ngModel)]="scheduleForm.startTime" [ngModelOptions]="{standalone: true}" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">Phút</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input type="number" placeholder="Nhập số phút" [(ngModel)]="scheduleForm.durationMin"
-            [ngModelOptions]="{standalone: true}" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">Phòng</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập tên phòng" [(ngModel)]="scheduleForm.roomName"
-            [ngModelOptions]="{standalone: true}" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">Số CB</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input type="number" placeholder="Nhập số cán bộ" [(ngModel)]="scheduleForm.proctorsNeeded"
-            [ngModelOptions]="{standalone: true}" />
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">Hình thức thi</nz-form-label>
-        <nz-form-control [nzSpan]="16">
-          <input nz-input placeholder="Nhập hình thức" [(ngModel)]="scheduleForm.examForm"
-            [ngModelOptions]="{standalone: true}" />
-        </nz-form-control>
-      </nz-form-item>
     </form>
   </ng-container>
+
+</nz-modal>
+
+<!-- ======================================================
+     MODAL TẠO / SỬA LỊCH THI
+====================================================== -->
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="isEditing ? 'Cập nhật lịch thi' : 'Thêm lịch thi'"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+
+  <ng-container *nzModalContent>
+
+    <form nz-form>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Đợt thi</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <nz-select nzPlaceHolder="Chọn đợt thi" [(ngModel)]="scheduleForm.batchId"
+            [ngModelOptions]="{ standalone: true }">
+
+            <nz-option *ngFor="let b of examBatches" [nzValue]="b.batchId" [nzLabel]="b.batchName">
+            </nz-option>
+
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Mã HP</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input [(ngModel)]="scheduleForm.courseCode" [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Tên HP</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input [(ngModel)]="scheduleForm.courseName" [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Ngày thi</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="date" [(ngModel)]="scheduleForm.date" [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Giờ bắt đầu</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="time" [(ngModel)]="scheduleForm.startHour" [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Giờ kết thúc</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="time" [(ngModel)]="scheduleForm.endHour" [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Số CB</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <input nz-input type="number" [(ngModel)]="scheduleForm.proctorsNeeded"
+            [ngModelOptions]="{ standalone: true }">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzSpan="6">Ghi chú</nz-form-label>
+        <nz-form-control nzSpan="16">
+          <textarea nz-input rows="2" [(ngModel)]="scheduleForm.note"
+            [ngModelOptions]="{ standalone: true }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+
+  </ng-container>
+
 </nz-modal>
